@@ -4,7 +4,7 @@ use std::{
     time::SystemTime,
 };
 
-use alloy::primitives::{utils::keccak256, Address};
+use alloy::primitives::{utils::keccak256, Address, U256};
 use async_trait::async_trait;
 use futures::{stream::BoxStream, StreamExt};
 use http::Request;
@@ -174,6 +174,16 @@ impl BebopClient {
                             .to_vec(),
                     ),
                 );
+
+                let expiry = match &quote.to_sign {
+                    BebopOrderToSign::Single(ref single) => single.expiry,
+                    BebopOrderToSign::Aggregate(ref aggregate) => aggregate.expiry,
+                };
+                quote_attributes.insert(
+                    "quote_expiry".to_string(),
+                    Bytes::from(U256::from(expiry).to_be_bytes::<32>().to_vec()),
+                );
+
                 let signed_quote = match quote.to_sign {
                     BebopOrderToSign::Single(ref single) => SignedQuote {
                         base_token: params.token_in.clone(),
