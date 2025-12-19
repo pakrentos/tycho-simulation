@@ -49,6 +49,7 @@ fn chain_to_bebop_url(chain: Chain) -> Result<String, RFQError> {
     let chain_path = match chain {
         Chain::Ethereum => "ethereum",
         Chain::Base => "base",
+        Chain::Arbitrum => "arbitrum",
         _ => return Err(RFQError::FatalError(format!("Unsupported chain: {chain:?}"))),
     };
     let url = format!("api.bebop.xyz/pmm/{chain_path}/v3");
